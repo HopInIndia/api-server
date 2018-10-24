@@ -45,8 +45,6 @@ passport.use('password', new LocalStrategy({
 	usernameField: 'phone', 
 	passReqToCallback: true
 }, (req, phone, password, done) => {
-	console.log('phone', phone)
-	console.log('password', password)
 	const userSchema = new Schema({ phone: schema.tree.phone, password: schema.tree.password })
 
 	userSchema.validate({ phone, password }, (err) => {

@@ -29,6 +29,7 @@ const config = {
 		apiRoot: process.env.API_ROOT || '',
 		masterKey: requireProcessEnv('MASTER_KEY'),
 		jwtSecret: requireProcessEnv('JWT_SECRET'),
+		secretSalt: requireProcessEnv('SECRET_SALT'),
 		mongo: {
 			options: {
 				db: {
