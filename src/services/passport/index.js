@@ -1,5 +1,6 @@
 import passport from 'passport'
 import { Schema } from 'bodymen'
+import { HeaderAPIKeyStrategy } from 'passport-headerapikey'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
@@ -81,8 +82,13 @@ passport.use('google', new BearerStrategy((token, done) => {
 	}).catch(done)
 }))
 
-passport.use('master', new BearerStrategy((token, done) => {
-	if (token === masterKey) {
+passport.use('master', new HeaderAPIKeyStrategy({ 
+	header: 'x-api-key', 
+	prefix: ''
+},
+false,
+(apikey, done) => {
+	if (apikey === masterKey) {
 		done(null, {})
 	} else {
 		done(null, false)
