@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { password, master, facebook, google } from '../../services/passport'
+import { password, xApi, facebook, google } from '../../services/passport'
 import { login, token } from './controller'
 
 const router = new Router()
@@ -8,15 +8,15 @@ const router = new Router()
  * @api {post} /oauth Create oauth
  * @apiName Authenticate using oAuth 2.0
  * @apiGroup Oauth
- * @apiPermission master
- * @apiParam {String} access_token master access token.
+ * @apiPermission xApi
+ * @apiParam {String} access_token xApi access token.
  * @apiSuccess {Object} oauth Oauth's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 404 Oauth not found.
- * @apiError 401 master access only.
+ * @apiError 401 xApi access only.
  */
 router.post('/',
-	master(),
+	xApi(),
 	password(),
 	login)
 
@@ -24,14 +24,14 @@ router.post('/',
  * @api {get} /oauth/token Exchange token
  * @apiName Exchange token using oAuth 2.0
  * @apiGroup Oauth
- * @apiPermission master
- * @apiParam {String} refreshToken master access token.
+ * @apiPermission xApi
+ * @apiParam {String} refreshToken xApi access token.
  * @apiSuccess {Object} oauth Oauth's data.
- * @apiError {Object} 401 Invalid refreshToken or master access token.
+ * @apiError {Object} 401 Invalid refreshToken or xApi access token.
  * @apiError 404 Oauth not found.
  */
 router.get('/token',
-	master(),
+	xApi(),
 	token)
 
 export default router

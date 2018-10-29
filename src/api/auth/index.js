@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { login } from './controller'
-import { password, master, facebook, google } from '../../services/passport'
+import { password, xApi, facebook, google } from '../../services/passport'
 
 const router = new Router()
 
@@ -8,17 +8,17 @@ const router = new Router()
  * @api {post} /auth Authenticate
  * @apiName Authenticate
  * @apiGroup Auth
- * @apiPermission master
+ * @apiPermission xApi
  * @apiHeader {String} Authorization Basic authorization with email and password.
- * @apiParam {String} access_token Master access_token.
+ * @apiParam {String} access_token xApi access_token.
  * @apiSuccess (Success 201) {String} token User `access_token` to be passed to other requests.
  * @apiSuccess (Success 201) {Object} user Current user's data.
- * @apiError 401 Master access only or invalid credentials.
+ * @apiError 401 xApi access only or invalid credentials.
  */
 router.post('/',
-  master(),
-  password(),
-  login)
+	xApi(),
+	password(),
+	login)
 
 /**
  * @api {post} /auth/facebook Authenticate with Facebook
@@ -30,8 +30,8 @@ router.post('/',
  * @apiError 401 Invalid credentials.
  */
 router.post('/facebook',
-  facebook(),
-  login)
+	facebook(),
+	login)
 
 /**
  * @api {post} /auth/google Authenticate with Google
@@ -43,7 +43,7 @@ router.post('/facebook',
  * @apiError 401 Invalid credentials.
  */
 router.post('/google',
-  google(),
-  login)
+	google(),
+	login)
 
 export default router

@@ -4,7 +4,7 @@ import { HeaderAPIKeyStrategy } from 'passport-headerapikey'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as BearerStrategy } from 'passport-http-bearer'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
-import { jwtSecret, masterKey } from '../../config'
+import { jwtSecret, xApiKey } from '../../config'
 import * as facebookService from '../facebook'
 import * as googleService from '../google'
 import User, { schema } from '../../api/user/model'
@@ -28,8 +28,8 @@ passport.authenticate('facebook', { session: false })
 export const google = () =>
 passport.authenticate('google', { session: false })
 
-export const master = () =>
-passport.authenticate('master', { session: false })
+export const xApi = () =>
+passport.authenticate('xApi', { session: false })
 
 export const token = ({ required, roles = User.roles } = {}) => (req, res, next) =>
 passport.authenticate('token', { session: false }, (err, user, info) => {
@@ -82,13 +82,13 @@ passport.use('google', new BearerStrategy((token, done) => {
 	}).catch(done)
 }))
 
-passport.use('master', new HeaderAPIKeyStrategy({ 
+passport.use('xApi', new HeaderAPIKeyStrategy({ 
 	header: 'x-api-key', 
 	prefix: ''
 },
 false,
 (apikey, done) => {
-	if (apikey === masterKey) {
+	if (apikey === xApiKey) {
 		done(null, {})
 	} else {
 		done(null, false)
