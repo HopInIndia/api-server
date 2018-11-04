@@ -9,7 +9,7 @@ const roles = ['user', 'admin']
 const userSchema = new Schema({
 	phone: {
 		type: String,
-		match: /^(([+])\d{1,2})-(\d{10})$/,
+		match: /^(\d{10})$/,
 		required: true,
 		unique: true,
 		trim: true,

@@ -1,49 +1,21 @@
 import { Router } from 'express'
 import { login } from './controller'
+import { done } from '../../services/response/'
 import { password, xApi, facebook, google } from '../../services/passport'
 
 const router = new Router()
 
-/**
- * @api {post} /auth Authenticate
- * @apiName Authenticate
- * @apiGroup Auth
- * @apiPermission xApi
- * @apiHeader {String} Authorization Basic authorization with email and password.
- * @apiParam {String} access_token xApi access_token.
- * @apiSuccess (Success 201) {String} token User `access_token` to be passed to other requests.
- * @apiSuccess (Success 201) {Object} user Current user's data.
- * @apiError 401 xApi access only or invalid credentials.
- */
 router.post('/',
 	xApi(),
 	password(),
-	login)
+	(req, res) => login(req, res, done))
 
-/**
- * @api {post} /auth/facebook Authenticate with Facebook
- * @apiName AuthenticateFacebook
- * @apiGroup Auth
- * @apiParam {String} access_token Facebook user accessToken.
- * @apiSuccess (Success 201) {String} token User `access_token` to be passed to other requests.
- * @apiSuccess (Success 201) {Object} user Current user's data.
- * @apiError 401 Invalid credentials.
- */
 router.post('/facebook',
 	facebook(),
-	login)
+	(req, res) => login(req, res, done))
 
-/**
- * @api {post} /auth/google Authenticate with Google
- * @apiName AuthenticateGoogle
- * @apiGroup Auth
- * @apiParam {String} access_token Google user accessToken.
- * @apiSuccess (Success 201) {String} token User `access_token` to be passed to other requests.
- * @apiSuccess (Success 201) {Object} user Current user's data.
- * @apiError 401 Invalid credentials.
- */
 router.post('/google',
 	google(),
-	login)
+	(req, res) => login(req, res, done))
 
 export default router

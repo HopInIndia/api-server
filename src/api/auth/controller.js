@@ -1,8 +1,8 @@
 import { sign } from '../../services/jwt'
-import { success } from '../../services/response/'
 
-export const login = ({ user }, res, next) =>
+export const login = ({ user }, res, callback) => {
 	sign(user.id)
-		.then((accessToken) => ({ accessToken, user: user.view(true) }))
-		.then(success(res, 201))
-		.catch(next)
+		.then(accessToken => ({ accessToken, user: user.view(true) }))
+		.then(data => callback(res, 200, data))
+		.catch(error => callback(res, 400, error))
+}
