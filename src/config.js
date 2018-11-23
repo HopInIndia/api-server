@@ -31,6 +31,7 @@ const config = {
 		jwtSecret: requireProcessEnv('JWT_SECRET'),
 		secretSalt: requireProcessEnv('SECRET_SALT'),
 		adminKey: requireProcessEnv('ADMIN_KEY'),
+		otpExpiresIn: 60,
 		mongo: {
 			options: {
 				db: {
