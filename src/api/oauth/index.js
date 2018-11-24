@@ -8,10 +8,10 @@ const router = new Router()
 router.post('/',
 	xApi(),
 	password(),
-	(req, res) => login(req, res, done))
+	async (req, res) => done(res, await login(req.user)))
 
 router.get('/token',
 	xApi(),
-	(req, res) => token(req, res, done))
+	async (req, res) => done(res, await token(req.query)))
 
 export default router

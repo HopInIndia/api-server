@@ -62,6 +62,7 @@ export const create = async ( body ) => {
 	try{
 		const decodedToken = jwtVerify(body.signUpToken)
 		if(decodedToken.phone == body.phone){
+			body.slugName = `${body.name.firstName}${body.name.lastName}`
 			const user = await User.create(body)
 			if(user._id){
 				const refreshToken = generateToken(user._id.toString())
@@ -70,7 +71,7 @@ export const create = async ( body ) => {
 					status: 200,
 					entity: {
 						success: true,
-						user: user.view(),
+						user: user.view(true),
 						refreshToken,
 						accessToken
 					}
@@ -98,9 +99,9 @@ export const create = async ( body ) => {
 				status: 400,
 				entity: {
 					success: false,
-					error: 'Signup token has expired'
+					error: 'Signup token has expired.'
 				}
-			}			
+			}
 		}
 		return {
 			status: 409,
@@ -112,6 +113,35 @@ export const create = async ( body ) => {
 	}
 }
 
+export const userData = async ( params ) => {
+	try{
+		const user = await User.findById(params.id)
+		if(user._id){
+			return {
+				status: 200,
+				entity: {
+					success: true,
+					user
+				}
+			}
+		}
+		return {
+			status: 400,
+			entity: {
+				success: false,
+				error: 'Invalid user ID.'
+			}
+		}
+	}catch(error){
+		return {
+			status: 409,
+			entity: {
+				success: false,
+				error: error.errors || error
+			}
+		}
+	}
+}
 
 // export const index = ({ querymen: { query, select, cursor } }, res, callback) =>
 // 	User.find(query, select, cursor)
@@ -125,11 +155,6 @@ export const create = async ( body ) => {
 // 		.then(data => callback(res, 200, data))
 // 		.catch(error => callback(res, 400, error))
 
-// export const userData = ({ params }, res, callback) =>
-// 	User.findById(params.id)
-// 		.then(user => user ? user.view(true) : null)
-// 		.then(data => callback(res, 200, data))
-// 		.catch(error => callback(res, 400, error))
 
 // export const showMe = ({ user }, res, callback) =>
 // 	callback(res, 200, user.view(true))

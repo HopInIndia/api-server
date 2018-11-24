@@ -1,39 +1,77 @@
 import { generateToken, decryptToken } from '../../services/crypto'
-import { sign } from '../../services/jwt'
+import { jwtSign, jwtVerify } from '../../services/jwt/'
 import { userData } from '../user/controller'
 
-export const login = ({ user }, res, callback) => {
-	const refreshToken = generateToken(user.id)
-	sign(user.id)
-		.then(accessToken => ({ refreshToken, accessToken, user: user.view(true) }))
-		.then(data => callback(res, 200, data))
-		.catch(error => callback(res, 400, error))
+export const login = async ( user ) => {
+	try{
+		const refreshToken = generateToken(user._id.toString())
+		const accessToken = jwtSign({id: user._id.toString()})
+		return {
+			status: 200,
+			entity: {
+				success: true,
+				user: user.view(true),
+				refreshToken,
+				accessToken
+			}
+		}
+		return {
+			status: 400,
+			entity: {
+				success: false,
+				error: 'Oops! Something went wrong.'
+			}
+		}
+	}catch (error){
+		return {
+			status: 409,
+			entity: {
+				success: false,
+				error: error.errors || error
+			}
+		}
+	}
 }
 
-export const token = ({ user, query }, res, callback) => {
-	const refreshToken = query.refreshToken
-	if(refreshToken && refreshToken.length == 72){
-		const decryptedToken = decryptToken(query.refresh_token || query.refreshToken)
-		if(!decryptedToken) {
-			callback(res, 401, {
-				message: 'Inavlid Token'
-			})
-		}
-		userData({ params: { id: decryptedToken }}, res, (res, status, user) => {
-			if(status == 200){
-				sign(decryptedToken)
-					.then(accessToken => ({ refreshToken, accessToken, user: user }))
-					.then(data => callback(res, 200, data))
-					.catch(error => callback(res, 401, error))				
-			}else{
-				callback(res, 401, {
-					message: 'Inavlid Token'
-				})				
+export const token = async ( query ) => {
+	try {
+		const refreshToken = query.refreshToken
+		const id = decryptToken(query.refresh_token || query.refreshToken)
+		if(!id) {
+			return {
+				status: 401,
+				entity: {
+					success: false,
+					error: 'Invalid token.'
+				}
 			}
-		})
-	}else{
-		callback(res, 401, {
-			message: 'Inavlid Token'
-		})
+		}
+		const response = await userData({ id })
+		if(response.status == 200){
+			return {
+				status: 200,
+				entity: {
+					success: true,
+					user: response.entity.user.view(true),
+					refreshToken: generateToken(id),
+					accessToken: jwtSign({ id })
+				}
+			}			
+		}
+		return {
+			status: 401,
+			entity: {
+				success: false,
+				error: 'Invalid token.'
+			}
+		}
+	}catch (error){
+		return {
+			status: 401,
+			entity: {
+				success: false,
+				error: error.errors || 'Invalid token.'
+			}
+		}
 	}
 }

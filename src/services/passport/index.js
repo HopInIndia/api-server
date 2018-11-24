@@ -1,5 +1,4 @@
 import passport from 'passport'
-import { Schema } from 'bodymen'
 import { HeaderAPIKeyStrategy } from 'passport-headerapikey'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as BearerStrategy } from 'passport-http-bearer'
@@ -7,7 +6,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { jwtSecret, xApiKey } from '../../config'
 import * as facebookService from '../facebook'
 import * as googleService from '../google'
-import User, { schema } from '../../api/user/model'
+import { User } from '../../api/user/model'
 
 export const password = () => (req, res, next) =>
 passport.authenticate('password', { session: false }, (err, user, info) => {
@@ -46,12 +45,6 @@ passport.use('password', new LocalStrategy({
 	usernameField: 'phone', 
 	passReqToCallback: true
 }, (req, phone, password, done) => {
-	const userSchema = new Schema({ phone: schema.tree.phone, password: schema.tree.password })
-
-	userSchema.validate({ phone, password }, (err) => {
-		if (err) done(err)
-	})
-
 	User.findOne({ phone }).then((user) => {
 		if (!user) {
 			done(true)

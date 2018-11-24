@@ -2,7 +2,14 @@ import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 import randtoken from 'rand-token'
 import mongoose, { Schema } from 'mongoose'
+import slug from 'mongoose-slug-generator'
 import { env } from '../../config'
+
+mongoose.plugin(slug, {
+	separator: "",
+	lang: "en",
+	truncate: 120
+})
 
 const roles = ['user', 'admin']
 
@@ -21,6 +28,17 @@ const userSchema = new Schema({
 		trim: true,
 		sparse: true,
 		lowercase: true
+	},
+	slugName: { 
+		type: String, 
+		lowercase: true, 
+		required: true
+	},
+	userName: { 
+		type: String, 
+		slug: 'slugName', 
+		slug_padding_size: 3,
+		unique: true 
 	},
 	password: {
 		type: String,
