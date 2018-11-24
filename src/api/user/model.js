@@ -19,6 +19,7 @@ const userSchema = new Schema({
 		match: /^\S+@\S+\.\S+$/,
 		unique: true,
 		trim: true,
+		sparse: true,
 		lowercase: true
 	},
 	password: {
@@ -96,7 +97,4 @@ userSchema.statics = {
 	}
 }
 
-const model = mongoose.model('User', userSchema)
-
-export const schema = model.schema
-export default model
+export const User = mongoose.model('User', userSchema)

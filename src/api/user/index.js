@@ -15,6 +15,6 @@ router.post('/verify-otp',
 
 router.post('/',
 	xApi(),
-	(req, res) => create(req, res))
+	async (req, res) => done(res, await create(req.body)))
 
 export default router

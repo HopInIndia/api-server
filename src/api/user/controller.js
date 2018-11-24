@@ -1,3 +1,5 @@
+import { jwtSign, jwtVerify } from '../../services/jwt/'
+import { generateToken, decryptToken } from '../../services/crypto'
 import { generateRandomDigits } from '../../services/helper'
 import { sendVerificationCode, verifyVerificationCode } from '../text/controller'
 import { User } from './model'
@@ -56,6 +58,59 @@ export const verifyOtp = async ( body ) => {
 	}
 }
 
+export const create = async ( body ) => {
+	try{
+		const decodedToken = jwtVerify(body.signUpToken)
+		if(decodedToken.phone == body.phone){
+			const user = await User.create(body)
+			if(user._id){
+				const refreshToken = generateToken(user._id.toString())
+				const accessToken = jwtSign({id: user._id.toString()})
+				return {
+					status: 200,
+					entity: {
+						success: true,
+						user: user.view(),
+						refreshToken,
+						accessToken
+					}
+				}
+			}
+		}
+		return {
+			status: 400,
+			entity: {
+				success: false,
+				error: 'Invalid parameters.'
+			}
+		}
+	}catch (error){
+		if (error.name === 'MongoError' && error.code === 11000) {
+			return {
+				status: 409,
+				entity: {
+					success: false,
+					error: 'Phone number already registered.'
+				}
+			}
+		}else if (error.name === 'TokenExpiredError'){
+			return {
+				status: 400,
+				entity: {
+					success: false,
+					error: 'Signup token has expired'
+				}
+			}			
+		}
+		return {
+			status: 409,
+			entity: {
+				success: false,
+				error: error.errors || error
+			}
+		}
+	}
+}
 
 
 // export const index = ({ querymen: { query, select, cursor } }, res, callback) =>
@@ -79,22 +134,6 @@ export const verifyOtp = async ( body ) => {
 // export const showMe = ({ user }, res, callback) =>
 // 	callback(res, 200, user.view(true))
 
-// export const create = ({ bodymen: { body } }, res, callback) => {
-// 	User.create(body)
-// 		.then(user => user.view(true))
-// 		.then(data => callback(res, 201, data))
-// 		.catch(err => {
-// 			if (err.name === 'MongoError' && err.code === 11000) {
-// 				res.status(409).json({
-// 					valid: false,
-// 					param: 'email',
-// 					message: 'email already registered'
-// 				})
-// 			} else {
-// 				callback(res, 400, err)
-// 			}
-// 		})
-// }
 
 // export const update = ({ bodymen: { body }, params, user }, res, callback) =>
 // 	User.findById(params.id === 'me' ? user.id : params.id)
