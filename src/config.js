@@ -32,6 +32,13 @@ const config = {
 		secretSalt: requireProcessEnv('SECRET_SALT'),
 		adminKey: requireProcessEnv('ADMIN_KEY'),
 		otpExpiresIn: 60 * 5,
+		msg91: {
+			apiBase: "http://api.msg91.com/api/sendhttp.php",
+			// apiBase: "http://api.msg91.com/api/v2/sendsms",
+			authkey: "181964ASuehXXhrB59fb3097",
+			sender: "IHOPIN",
+			route: 4
+		},
 		mongo: {
 			options: {
 				db: {

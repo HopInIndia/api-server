@@ -1,5 +1,4 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
-import Promise from 'bluebird'
 import { secretSalt } from '../../config'
 
 const aad = Buffer.from('0123456789', 'hex')

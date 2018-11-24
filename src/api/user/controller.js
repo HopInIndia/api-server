@@ -9,8 +9,7 @@ export const sendOtp = async ( body ) => {
 	try{
 		const phone = body.phone
 		const verificationCode = generateRandomDigits(4)
-		const message = `${verificationCode} is your one time password to register on HopIn`
-		console.log(message)
+		const message = `${verificationCode} is your OTP to register on HopIn. The OTP is valid for 5 mins. Please do not share it with anyone.`
 		const response = await sendVerificationCode({ phone, verificationCode, message })
 		if(response.status === 200){
 			return {

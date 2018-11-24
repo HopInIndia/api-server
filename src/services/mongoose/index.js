@@ -6,7 +6,7 @@ Object.keys(mongo.options).forEach((key) => {
 	mongoose.set(key, mongo.options[key])
 })
 
-mongoose.Promise = Promise
+// mongoose.Promise = Promise
 /* istanbul ignore next */
 mongoose.Types.ObjectId.prototype.view = function () {
 	return { id: this.toString() }

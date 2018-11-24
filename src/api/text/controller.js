@@ -1,18 +1,33 @@
 import { jwtSign, jwtVerify } from '../../services/jwt/'
-import { otpExpiresIn } from '../../config'
+import { invokeApi } from '../../services/helper/'
+import { otpExpiresIn, msg91 } from '../../config'
 import { Text } from './model'
 
 export const sendMessage = async (body, res, callback) => {
 	try{
 		const response = await Text.create(body)
 		if(response._id){
-			return {
-				status: 200,
-				entity: {
-					success: true,
-					...response
-				}
+			const url = msg91.apiBase
+			const method = 'GET'
+			const params = {
+				sender: msg91.sender,
+				route: msg91.route,
+				mobiles: `91${response.phone}`,
+				authkey: msg91.authkey,
+				country: `91`,
+				message: body.message
 			}
+			const textResponse = await invokeApi({ url, method, params })
+			if(textResponse){
+				return {
+					status: 200,
+					entity: {
+						success: true,
+						...response
+					}
+				}				
+			}
+			response.delete()
 		}
 		return {
 			status: 400,
@@ -22,6 +37,7 @@ export const sendMessage = async (body, res, callback) => {
 			}
 		}
 	}catch(error){
+		console.log(error)
 		return {
 			status: 400,
 			entity: {
