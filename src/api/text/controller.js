@@ -3,7 +3,7 @@ import { invokeApi } from '../../services/helper/'
 import { otpExpiresIn, msg91 } from '../../config'
 import { Text } from './model'
 
-export const sendMessage = async (body, res, callback) => {
+export const sendMessage = async (body) => {
 	try{
 		const response = await Text.create(body)
 		if(response._id){
