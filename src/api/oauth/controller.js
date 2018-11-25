@@ -46,23 +46,12 @@ export const token = async ( query ) => {
 				}
 			}
 		}
-		const response = await userData({ id })
-		if(response.status == 200){
-			return {
-				status: 200,
-				entity: {
-					success: true,
-					user: response.entity.user.view(true),
-					refreshToken: generateToken(id),
-					accessToken: jwtSign({ id })
-				}
-			}			
-		}
 		return {
-			status: 401,
+			status: 200,
 			entity: {
-				success: false,
-				error: 'Invalid token.'
+				success: true,
+				refreshToken: generateToken(id),
+				accessToken: jwtSign({ id })
 			}
 		}
 	}catch (error){

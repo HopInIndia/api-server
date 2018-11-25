@@ -17,4 +17,9 @@ router.post('/',
 	xApi(),
 	async (req, res) => done(res, await create(req.body)))
 
+router.get('/me',
+	xApi(),
+	token(),
+	async (req, res) => done(res, {status: 200, entity: {success: true, user: req.user.view(true)}}))
+
 export default router
