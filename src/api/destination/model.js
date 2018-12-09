@@ -32,4 +32,19 @@ const destinationSchema = new Schema({
 	}
 })
 
+destinationSchema.methods = {
+	view (full) {
+		let view = {}
+		let fields = ['_id', 'type', 'name', 'address', 'email', 'phone', 'locaton']
+
+		if (full) {
+			fields = [...fields, 'addedBy', 'createdAt', 'updatedAt']
+		}
+
+		fields.forEach((field) => { view[field] = this[field] })
+
+		return view
+	},
+}
+
 export const Destination = mongoose.model('Destination', destinationSchema)

@@ -21,10 +21,10 @@ const vehicleSchema = new Schema({
 vehicleSchema.methods = {
 	view (full) {
 		let view = {}
-		let fields = ['make', 'model', 'color', 'registrationNumber']
+		let fields = ['_id', 'make', 'model', 'color', 'registrationNumber']
 
 		if (full) {
-			fields = [...fields, '_id', 'assignedTo', 'addedBy', 'createdAt', 'updatedAt']
+			fields = [...fields, 'assignedTo', 'addedBy', 'createdAt', 'updatedAt']
 		}
 
 		fields.forEach((field) => { view[field] = this[field] })
